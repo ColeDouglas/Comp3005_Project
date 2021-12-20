@@ -1,7 +1,7 @@
 /* All the DDL you need to make your own server
+ *  Select all + paste should work, if you are using Postgres
  *
  *  The first part creates the tables
- *
  *  The second part inserts some data to start with
  *
  * @author Cole Douglas
@@ -15,14 +15,12 @@ create table book (
 	Genre			VARCHAR(30),
 	NumberOfPages	INT,
 	Price			NUMERIC(6,2),
- 	Publisher		VARCHAR(30),
 	ReleaseDate		DATE,
 	Quantity		INT,
 	Commission 		NUMERIC(3,2),
 
 	primary key (IDBook)
 );
-
 
 -- The Sales Relation --
 Create table sales( 
@@ -33,7 +31,6 @@ Create table sales(
 	primary key (IDSale)
 );
 
-
 -- The Author Relation --
 create table author(
 	IDAuthor		serial,
@@ -42,7 +39,6 @@ create table author(
 
  	primary key (IDAuthor)
 );
-
 
  -- The Book/Author Relation --
 create table writes(
@@ -69,7 +65,6 @@ create table publisher(
 create table Sold(
 	IDBook 			INT,
 	IDPublisher 	INT,	
-	Saledate 		Date,
 
 	primary key (IDBook, IDPublisher),
 	foreign key (IDBook) references book,
@@ -99,7 +94,7 @@ create table calls(
 
 -- The Customer Relation --
 create table Customer( 
-	IDCustomer  	 	serial,
+	IDCustomer  	serial,
 	Name			VARCHAR(20),
 
 	primary key (IDCustomer)
@@ -109,9 +104,9 @@ create table Customer(
 -- The Shipment Relation --
 -- ID Shipment is for the tables, Shipment Number is for the users.
 create table Shipment (
-	IDShipment			serial,
+	IDShipment		serial,
 	CustomerID		INT,
-	ShipmentNumber		INT,
+	ShipmentNumber	INT,
 	CurrentLocation VARCHAR(30),
 	Destination		VARCHAR(30),
 	Billing			INT,
@@ -133,7 +128,7 @@ create table checkout (
 	IDCustomer		INT,
 	IDBook			INT,
 	ShipmentNumber  		INT,
-	primary key (IDCustomer, IDBook),
+	primary key (IDCustomer, IDBook, ShipmentNumber),
 	foreign key (IDCustomer) references Customer,
 	foreign key (IDBook) references book
 );
@@ -143,19 +138,19 @@ create table checkout (
 --- Sample insertions to get you started --- 
 
 
-insert into Book ( Name, ISBN, Genre, NumberOfPages, Price, Publisher, ReleaseDate, Quantity, Commission )
+insert into Book ( Name, ISBN, Genre, NumberOfPages, Price, ReleaseDate, Quantity, Commission )
 values 
-    ( 'Going Postal',           0060502932,    'Fantasy', 416,  7.99,   'RandomHouse', '2005-09-27', 42, 0.11),
- 	( 'Good Omens',             0060853980,    'Fantasy', 512, 12.99, 'WilliamMorrow', '2006-11-28', 30,  0.6),	  
- 	( 'A Slip of the Keyboard', 0060853980,    'Opinion', 512, 28.00, 'WilliamMorrow', '2006-11-28', 25,  0.6),	
- 	( 'Theogony',                019953831, 'Philosophy',  24, 24.11,  'Peguin Books', '0-01-01', 12, 0.12),	
- 	( 'Work and Days',           017868421, 'Philosophy',  18, 28.00,  'Peguin Books', '0-01-01', 11, 0.35),	
-	( 'The Sandman',            0380817705, 'Comic Book', 416, 40.12,   'HarperTorch', '2002-01-08', 25, 0.26),	
-    (  'Neverwhere',            1401210074,    'Fiction', 224, 11.46,       'Vertigo', '2007-02-14', 44, 0.13),
-	( 'Happily Ever After', 	0358757705,'Non-Fiction', 148, 38.00,   'RandomHouse', '1986-01-01', 31, 0.44),
-	( 'White Fragility', 		0807047414,   'Politics', 192, 10.01,  'Beacon Press', '2018-07-26', 17, 0.39),
-	( 'Normal People', 			1984822187,    'Fiction', 304,  8.20,   'HarperTorch', '2020-02-18', 31, 0.17),
-	( 'Diary of a Wimpy kid',   1419749153,    'Children', 224, 9.00, 'WilliamMorrow', '2011-12-25', 29, 0.12);
+    ( 'Going Postal',           0060502932,    'Fantasy', 416,  7.99, '2005-09-27', 42, 0.11),
+ 	( 'Good Omens',             0060853980,    'Fantasy', 512, 12.99, '2006-11-28', 30,  0.6),	  
+ 	( 'A Slip of the Keyboard', 0060853980,    'Opinion', 512, 28.00, '2006-11-28', 25,  0.6),	
+ 	( 'Theogony',                019953831, 'Philosophy',  24, 24.11, '0-01-01',    12, 0.12),	
+ 	( 'Work and Days',           017868421, 'Philosophy',  18, 28.00, '0-01-01',    11, 0.35),	
+	( 'The Sandman',            0380817705, 'Comic Book', 416, 40.12, '2002-01-08', 25, 0.26),	
+    (  'Neverwhere',            1401210074,    'Fiction', 224, 11.46, '2007-02-14', 44, 0.13),
+	( 'Happily Ever After', 	0358757705,'Non-Fiction', 148, 38.00, '1986-01-01', 31, 0.44),
+	( 'White Fragility', 		0807047414,   'Politics', 192, 10.01, '2018-07-26', 17, 0.39),
+	( 'Normal People', 			1984822187,    'Fiction', 304,  8.20, '2020-02-18', 31, 0.17),
+	( 'Diary of a Wimpy kid',   1419749153,    'Children', 224, 9.00, '2011-12-25', 29, 0.12);
 
 
 insert into Sales(IDBook, SaleDate )
@@ -214,12 +209,12 @@ values
 
 insert into Publisher ( Name, Address, EmailAddress, BankingAccount )
 values
-	('RandomHouse' , 'Some Street', 'RandomHouse Email', 1),
-	('WilliumMorrow' , 'Some Street', 'WilliumMorrow Email', 2),
-	('Peguin Books' , 'Some Street', 'Peguin Books', 3),
-	('HarperTorch' , 'Some Street', 'Harper Torch Email', 4),
-	('Vertigo' , 'Some Street', 'Vertigo Email', 5),
-	('Beacon Press' , 'Some Street', 'Beacon Email', 6);
+	( 'RandomHouse' , 'Some Street', 'RandomHouse Email', 1 ),
+	( 'WilliumMorrow' , 'Some Street', 'WilliumMorrow Email', 2 ),
+	( 'Peguin Books' , 'Some Street', 'Peguin Books', 3 ),
+	( 'HarperTorch' , 'Some Street', 'Harper Torch Email', 4 ),
+	( 'Vertigo' , 'Some Street', 'Vertigo Email', 5 ),
+	( 'Beacon Press' , 'Some Street', 'Beacon Email', 6 );
 
 
 insert into sold ( IDBook, IDPublisher)
@@ -263,16 +258,24 @@ values
 
 insert into Customer ( IDCustomer, Name )
 values
-	(0, 'owner'),
-	(1, 'user');
+	(0,'owner');
+
+insert into Customer ( Name )
+values
+	('guest'),
+	('user');
 
 
 insert into checkout ( IDCustomer, IDBook, ShipmentNumber)
 values
-	(1,1,66);
+	(2,1,1),
+	(2,3,1),
+	(2,2,1),
+	(2,3,2);
 
 
 insert into Shipment( CustomerID, ShipmentNumber, CurrentLocation, Destination, Billing )
 values
-	(1, 66,'Somewhere', 'Somewhere else', 1);
+	(2, 1,'Somewhere', 'Somewhere else', 1),
+	(2, 2,'Somewhere', 'Somewhere else', 1);
 
